@@ -10,18 +10,31 @@ static void notifyCallback(
   uint8_t* pData,
   size_t length,
   bool isNotify) {
-    
+
+
     log_i("Notify callback for characteristic ");
     log_i("%s",pBLERemoteCharacteristic->getUUID().toString().c_str());
+
+  // std::string myString = pBLERemoteCharacteristic->readValue();
+  // length = myString.length();  
+  // pData = reinterpret_cast<uint8_t*>(&myString[0]);
+
+
     log_i(" of data length %d", length);
 
-  length = pBLERemoteCharacteristic->readValue().length();  
-  pData = pBLERemoteCharacteristic->readRawData();
-
 		for (int i = 0; i < length; i++){
-        log_i("adding data to buffer %#04x", pData[i]);
-		  	BleSerialClient::receiveBuffer.add(pData[i]); }  
-    
+       log_i("adding data to buffer %#04x", pData[i]);
+		  	BleSerialClient::receiveBuffer.add(pData[i]); 
+        }  
+
+    Serial.println("Reading:");
+    char strBuf[50];
+    for (int i = 0; i < length; i++){ 
+        sprintf(strBuf, " - 0x%02x",pData[i]);
+        Serial.print(strBuf);
+    }
+    Serial.println();
+
 }  // notifiy callback
 
 static void scanCompleteCB(BLEScanResults scanResults) {
@@ -231,7 +244,7 @@ int BleSerialClient::peek()
 
 int BleSerialClient::available()
 {
-    log_i("available %d",receiveBuffer.getLength());
+  //  log_i("available %d",receiveBuffer.getLength());
   	return receiveBuffer.getLength();
 }
 
@@ -310,7 +323,7 @@ size_t BleSerialClient::write(uint8_t byte)
   // Flush if buffer full or if 100ms since last flush
 	  if ((this->transmitBufferLength == maxTransferSize)||((millis() - flush_100ms >= flush_time))) { 
       
-		  flush();
+		  // flush();
       }
   	return 1;
 }
@@ -320,9 +333,9 @@ void BleSerialClient::flush()
  
  if (true) { 
 	    if (this->transmitBufferLength > 0)
-	        {
+	        {   log_i("flushing %d bytes",this->transmitBufferLength);
 		          TxCharacteristic->writeValue(this->transmitBuffer, this->transmitBufferLength);
-		          log_i("flushed %d bytes",this->transmitBufferLength);
+		          
               this->transmitBufferLength = 0;
               
           } // buffer > 0
