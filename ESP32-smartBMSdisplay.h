@@ -2,6 +2,8 @@
 #define MySerial SerialBT
 static bool haveBT = true;
 
+#define SW1 35
+#define SW2 34
 #define ALARM_PIN 16
 #define SCL 25
 #define SDA 26
@@ -11,6 +13,17 @@ static bool haveBT = true;
 
 #define RX 25
 #define TX 27
+
+// display pages
+int pagenumber = 1;
+
+#define SUMMARY 0
+#define SOC 1
+#define VOLTAGE 2
+#define AMPS 3
+#define CELLS 4
+#define END 5
+
 
 static BleSerialClient SerialBT;
 uint8_t unitMACAddress[6];  // Use MAC address in BT broadcast and display
@@ -27,6 +40,8 @@ float coct = 120.0;   // charge over current trigger
 float doct = 120.0;   // discharge over current trigger
 bool MyAlarm = false;
 bool myBeep = false;
+bool mute = false;
+bool depressed = false;
 
 // Global battery stat variables (For printing to displays)
 float CellMin = 5.0; // Default value > max possible cell votlage

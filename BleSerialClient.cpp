@@ -26,7 +26,7 @@ static void notifyCallback(
        log_i("adding data to buffer %#04x", pData[i]);
 		  	BleSerialClient::receiveBuffer.add(pData[i]); 
         }  
-
+#ifdef DEBUG
     Serial.println("Reading:");
     char strBuf[50];
     for (int i = 0; i < length; i++){ 
@@ -34,14 +34,17 @@ static void notifyCallback(
         Serial.print(strBuf);
     }
     Serial.println();
+#endif
 
 }  // notifiy callback
 
 static void scanCompleteCB(BLEScanResults scanResults) {
+  #ifdef DEBUG
 	    printf("Scan complete!\n");
 	    printf("We found %d devices\n", scanResults.getCount());
 	    scanResults.dump();
       Serial.println("Begining Scan Again.");
+  #endif
       BLEScan *pBLEScan = BLEDevice::getScan();
       pBLEScan->clearResults();
       pBLEScan->start(5, scanCompleteCB, false);
@@ -61,12 +64,16 @@ void BleSerialClient::onDisconnect(BLEClient *pClient)
 	bleConnected = false;
 	if (enableLed)
 		digitalWrite(ledPin, LOW);
+    delay(5000);
+    this->receiveBuffer.clear();
 
 } // onDisconnect
 
 bool BleSerialClient::connectToServer() {
     log_i("Forming a connection to ");
+    #ifdef DEBUG
     Serial.println(myDevice->getAddress().toString().c_str());
+    #endif
     
    // pClient  = BLEDevice::createClient();  // Client Created in begin
     log_i(" - Created client");
@@ -114,25 +121,30 @@ bool BleSerialClient::connectToServer() {
 
     TxCharacteristic = pRemoteService->getCharacteristic(charTxUUID);
     if (TxCharacteristic == nullptr) {
+      #ifdef DEBUG
       Serial.print("Failed to find our Write characteristic UUID: ");
       Serial.println(charTxUUID.toString().c_str());
+      #endif
       pClient->disconnect();
       return false;
     }
+    #ifdef DEBUG
     Serial.println(" - Found our Tx characteristic");
+  
     if(TxCharacteristic->canWrite()) {
          Serial.println("canWrite true");
     }
-    
+    #endif  
     return true;
 } // connectToServer
 
  
 
   void BleSerialClient::onResult(BLEAdvertisedDevice advertisedDevice) {
+    #ifdef DEBUG
     Serial.print("BLE Advertised Device found: ");
     Serial.println(advertisedDevice.toString().c_str());
-    
+    #endif
     // We have found a device, let us now see if it contains the service we are looking for.
     if (advertisedDevice.haveServiceUUID() && advertisedDevice.isAdvertisingService(serviceUUID)) {
     
@@ -156,7 +168,9 @@ void BleSerialClient::begin(const char *name, bool enable_led, int led_pin)
 	{
     pinMode(ledPin, OUTPUT);
 	}
+  #ifdef DEBUG
   Serial.println("Starting BLE Client application...");
+  #endif
 	pBLEDevice = new BLEDevice();
   pBLEDevice->init("");
   pClient = pBLEDevice->createClient();
@@ -171,7 +185,7 @@ void BleSerialClient::begin(const char *name, bool enable_led, int led_pin)
   pBLEScan->setInterval(1349);
   pBLEScan->setWindow(449);
   pBLEScan->setActiveScan(true);
-  pBLEScan->start(5, false);
+  pBLEScan->start(5, scanCompleteCB, false);
   log_i("begin exit");
 
 }
@@ -186,10 +200,17 @@ void BleSerialClient::bleLoop () {
   // connected we set the connected flag to be true.
   if (doConnect == true) {
     if (connectToServer()) {
+      #ifdef DEBUG
       Serial.println("We are now connected to the BLE Server.");
-    } else {
+      #endif
+      this->receiveBuffer.clear();
+    } 
+    #ifdef DEBUG
+    else {
+
       Serial.println("We have failed to connect to the server; there is nothin more we will do.");
     }
+    #endif
     doConnect = false;
   }
 
@@ -204,12 +225,12 @@ void BleSerialClient::bleLoop () {
   
 }
 
-/*
+
 bool BleSerialClient::connected()
 {
-	return pClient->isConnected();
+	return bleConnected;
 }
-*/
+
 
 int BleSerialClient::read()
 {
@@ -250,7 +271,7 @@ int BleSerialClient::available()
 
 size_t BleSerialClient::print(const char *str)
 {
-  Serial.println("In print()");
+ //  Serial.println("In print()");
 	if (pClient->isConnected() == 0)
 	{
 		return 0;
