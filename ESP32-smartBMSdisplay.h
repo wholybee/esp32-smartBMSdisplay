@@ -1,21 +1,22 @@
+
 //#define MySerial MySoftwareSerial
 #define MySerial SerialBT
 static bool haveBT = true;
 
 #define SW1 35
 #define SW2 34
-#define ALARM_PIN 16
-#define SCL 25
+#define ALARM_PIN 18
+#define SCL 27
 #define SDA 26
-#define RST 27
-#define DC 14
-#define CS 12
+#define RST 25
+#define DC 33
+#define CS 32
 
 #define RX 25
 #define TX 27
 
 // display pages
-int pagenumber = 1;
+int pagenumber = 0;
 
 #define SUMMARY 0
 #define SOC 1
@@ -76,6 +77,6 @@ bool AFEerror = false;
 // objects we need
 
 SoftwareSerial MySoftwareSerial(RX, TX);
-U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2( U8G2_R2, SCL , SDA  , CS , DC , RST );
+U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2( U8G2_R0, SCL , SDA  , CS , DC , RST );
 OverkillSolarBms2 bms;
 ProtectionStatus prot_status;
