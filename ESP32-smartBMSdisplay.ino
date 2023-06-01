@@ -61,7 +61,7 @@ if (haveBT) {
               if (!digitalRead(SW2) & !depressed) {
                     depressed = true;
                     pagenumber++;
-                    if (pagenumber==END) pagenumber = 1;
+                    if (pagenumber==END) pagenumber = 0;
                    // timestamp_100ms = millis();
                       
                 
@@ -92,14 +92,14 @@ void startBluetooth() {
 }
 
 void setMyAlarm (void) {
-  if (PackVoltagef > povt) { 
+  if (PackVoltagef > povt-0.1) { 
       MyAlarm = true; 
       packOver = true;
       #ifdef DEBUG
       Serial.println ("Pack Overvoltage!");
       #endif
       }
-  else if (PackVoltagef < puvt) { 
+  else if (PackVoltagef < puvt+0.1) { 
       MyAlarm = true; 
       PackUnder = true;
       #ifdef DEBUG
@@ -323,12 +323,12 @@ u8g2.firstPage();
  
     //SOC Meter
   u8g2.setFont(u8g2_font_inr24_mf);  
-  u8g2.setCursor(5, 32);
+  u8g2.setCursor(2, 32);
   float stateOfCharge = RSOC;
   u8g2.print(stateOfCharge,0);
   u8g2.print("%");
   u8g2.setFont(u8g2_font_7x13_mf); 
-  u8g2.setCursor(5, 52);
+  u8g2.setCursor(2, 52);
   u8g2.print(RemainCapacityf,0);
   u8g2.print("Ah");
   u8g2.setCursor(65, 52);
@@ -337,7 +337,7 @@ u8g2.firstPage();
 
     //Pack status
   u8g2.setFont(u8g2_font_5x8_mf); // choose font 
-  u8g2.setCursor(4, 63);
+  u8g2.setCursor(1, 63);
   if(AFEerror) u8g2.print(F("AFE ERROR"));
   else if(shortCircuit) u8g2.print(F("SHORT CIRCUIT"));
   else if(cellOver) u8g2.print(F("Cell Overvoltage"));
@@ -363,20 +363,20 @@ u8g2.firstPage();
  
     //Volt Meter
   u8g2.setFont(u8g2_font_inr24_mf);   //  u8g2_font_fub30_tr
-  u8g2.setCursor(4, 32);
+  u8g2.setCursor(1, 32);
   u8g2.print(PackVoltagef,2);
   u8g2.print("V");
   u8g2.setFont(u8g2_font_7x13_mf); 
-  u8g2.setCursor(5, 52);
+  u8g2.setCursor(2, 52);
   u8g2.print(PackCurrentf,0);
   u8g2.print("A");
-  u8g2.setCursor(65, 52);
+  u8g2.setCursor(62, 52);
   u8g2.print(PackCurrentf*PackVoltagef,0);
   u8g2.print("W");
 
     //Pack status
   u8g2.setFont(u8g2_font_5x8_mf); // choose font 
-  u8g2.setCursor(4, 63);
+  u8g2.setCursor(1, 63);
   if(AFEerror) u8g2.print(F("AFE ERROR"));
   else if(shortCircuit) u8g2.print(F("SHORT CIRCUIT"));
   else if(cellOver) u8g2.print(F("Cell Overvoltage"));
@@ -403,20 +403,20 @@ u8g2.firstPage();
  
     //Amp Meter
   u8g2.setFont(u8g2_font_inr24_mf);  
-  u8g2.setCursor(5, 32);
+  u8g2.setCursor(2, 32);
   u8g2.print(PackCurrentf,1);
   u8g2.print("A");
   u8g2.setFont(u8g2_font_7x13_mf); 
-  u8g2.setCursor(5, 52);
+  u8g2.setCursor(2, 52);
   u8g2.print(PackVoltagef,2);
   u8g2.print("V");
-  u8g2.setCursor(65, 52);
+  u8g2.setCursor(62, 52);
   u8g2.print(PackCurrentf*PackVoltagef,0);
   u8g2.print("W");
 
     //Pack status
   u8g2.setFont(u8g2_font_5x8_mf); // choose font 
-  u8g2.setCursor(4, 63);
+  u8g2.setCursor(1, 63);
   if(AFEerror) u8g2.print(F("AFE ERROR"));
   else if(shortCircuit) u8g2.print(F("SHORT CIRCUIT"));
   else if(cellOver) u8g2.print(F("Cell Overvoltage"));
@@ -443,21 +443,21 @@ u8g2.firstPage();
 
   //Cell States
   u8g2.setFont(u8g2_font_7x13_mf); // u8g2.setFont(u8g2_font_9x15_mf);
-  u8g2.setCursor(4, 12);
+  u8g2.setCursor(1, 12);
   u8g2.print(myCellVoltages[0],3);
   u8g2.print("v");
   if(balancerStates[0]==1) u8g2.print("*");
-  u8g2.setCursor(4, 24);
+  u8g2.setCursor(1, 24);
   u8g2.print(myCellVoltages[1],3);
   u8g2.print("v");
   if(balancerStates[1]==1) u8g2.print("*");
 
   
-  u8g2.setCursor(4, 36);
+  u8g2.setCursor(1, 36);
   u8g2.print(myCellVoltages[2],3);
   u8g2.print("v");
   if(balancerStates[2]==1) u8g2.print("*");
-  u8g2.setCursor(4, 48);
+  u8g2.setCursor(1, 48);
   u8g2.print(myCellVoltages[3],3);
   u8g2.print("v");
   if(balancerStates[3]==1) u8g2.print("*");
@@ -468,17 +468,17 @@ u8g2.firstPage();
 
   
   u8g2.setFont(u8g2_font_7x13_mf);
-  u8g2.setCursor(65, 12);
+  u8g2.setCursor(62, 12);
   u8g2.print(CellMin,3); u8g2.print("min");
-  u8g2.setCursor(65, 24);
+  u8g2.setCursor(62, 24);
   u8g2.print(CellMax,3); u8g2.print("max");
-  u8g2.setCursor(65, 36);
+  u8g2.setCursor(62, 36);
   u8g2.print(Celldiff,3); u8g2.print("diff");
-  u8g2.drawFrame(61,0,67,39); // u8g2.drawLine(61, 0, 61, 39);
+  u8g2.drawFrame(58,0,67,39); // u8g2.drawLine(61, 0, 61, 39);
 
   //Pack status
   u8g2.setFont(u8g2_font_5x8_mf); // choose font 
-  u8g2.setCursor(4, 63);
+  u8g2.setCursor(1, 63);
   if(AFEerror) u8g2.print(F("AFE ERROR"));
   else if(shortCircuit) u8g2.print(F("SHORT CIRCUIT"));
   else if(cellOver) u8g2.print(F("Cell Overvoltage"));
@@ -497,11 +497,11 @@ u8g2.firstPage();
 
  // Mosfet Status
   u8g2.setFont(u8g2_font_5x8_mf);
-  u8g2.setCursor(100, 55);
+  u8g2.setCursor(97, 55);
   u8g2.print("C:");
   if(chargeFet)u8g2.print("ON");
   else u8g2.print("OFF");
-  u8g2.setCursor(100, 63); 
+  u8g2.setCursor(97, 63); 
   u8g2.print("D:");
   if(dischargeFet)u8g2.print("ON");
   else u8g2.print("OFF");
@@ -518,36 +518,36 @@ u8g2.firstPage();
   do {
 
   // Power Meter
-  u8g2.drawFrame(3,0,61,39);
+  u8g2.drawFrame(0,0,58,39);
   u8g2.setFont(u8g2_font_7x13_mf); // choose font 
-  u8g2.setCursor(6, 12);
+  u8g2.setCursor(3, 12);
   u8g2.print(PackVoltagef,2);
-  u8g2.setCursor(52, 12);
+  u8g2.setCursor(49, 12);
   u8g2.print("V");
-  u8g2.setCursor(6, 24);
+  u8g2.setCursor(3, 24);
   u8g2.print(PackCurrentf,1);
-  u8g2.setCursor(52, 24);
+  u8g2.setCursor(49, 24);
   u8g2.print("A");
-  u8g2.setCursor(6, 36);
+  u8g2.setCursor(3, 36);
   u8g2.print(PackVoltagef *PackCurrentf,1);
-  u8g2.setCursor(52, 36);
+  u8g2.setCursor(49, 36);
   u8g2.print("W");
 
   //SOC Meter
-  u8g2.setCursor(70, 12);
+  u8g2.setCursor(67, 12);
   float stateOfCharge = RSOC;
   u8g2.print(stateOfCharge,0);
   u8g2.print("%");
-  u8g2.setCursor(70, 24);
+  u8g2.setCursor(67, 24);
   u8g2.print(RemainCapacityf,0);
   u8g2.print("Ah");
-  u8g2.setCursor(70, 36);
+  u8g2.setCursor(67, 36);
   u8g2.print(Temp_probe_1f,1);
   u8g2.print("c");
 
   //Pack status
   u8g2.setFont(u8g2_font_5x8_mf); // choose font 
-  u8g2.setCursor(4, 47);
+  u8g2.setCursor(2, 47);
   if(AFEerror) u8g2.print(F("AFE ERROR"));
   else if(shortCircuit) u8g2.print(F("SHORT CIRCUIT"));
   else if(cellOver) u8g2.print(F("Cell Overvoltage"));
@@ -565,28 +565,28 @@ u8g2.firstPage();
   else if(PackCurrentf==0) u8g2.print(F("Idle"));
 
   //Cell and MOSFET States
-  u8g2.setCursor(4, 55);
+  u8g2.setCursor(2, 55);
   u8g2.print(myCellVoltages[0],3);
   u8g2.print("v");
   if(balancerStates[0]==1) u8g2.print("*");
-  u8g2.setCursor(43, 55);
+  u8g2.setCursor(40, 55);
   u8g2.print(myCellVoltages[1],3);
   u8g2.print("v");
   if(balancerStates[1]==1) u8g2.print("*");
-  u8g2.setCursor(100, 55);
+  u8g2.setCursor(97, 55);
   u8g2.print("C:");
   if(chargeFet)u8g2.print("ON");
   else u8g2.print("OFF");
   
-  u8g2.setCursor(4, 63);
+  u8g2.setCursor(2, 63);
   u8g2.print(myCellVoltages[2],3);
   u8g2.print("v");
   if(balancerStates[2]==1) u8g2.print("*");
-  u8g2.setCursor(43, 63);
+  u8g2.setCursor(40, 63);
   u8g2.print(myCellVoltages[3],3);
   u8g2.print("v");
   if(balancerStates[3]==1) u8g2.print("*");
-  u8g2.setCursor(100, 63);
+  u8g2.setCursor(97, 63);
   u8g2.print("D:");
   if(dischargeFet)u8g2.print("ON");
   else u8g2.print("OFF");
