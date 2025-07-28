@@ -109,7 +109,7 @@ bool BleSerialClient::connectToServer() {
     // Read the value of the characteristic.
     if(RxCharacteristic->canRead()) {
         log_i("canRead true");
-      std::string value = RxCharacteristic->readValue();
+      std::string value = RxCharacteristic->readValue().c_str(); // Explicit conversion
       log_i("The characteristic value was: ");
       log_i("%s",value.c_str());
     }
@@ -399,6 +399,3 @@ void BleSerialClient::onRead(BLERemoteCharacteristic *pCharacteristic)
   }  // correct UUID
 } // onRead
 */
-
-
-
